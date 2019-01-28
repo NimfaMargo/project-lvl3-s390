@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/NimfaMargo/project-lvl3-s390#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
@@ -37,7 +39,9 @@
     "jest": "^23.6.0",
     "jest-cli": "^23.6.0",
     "jquery": "^3.3.1",
-    "popper.js": "^1.14.6"
+    "melanke-watchjs": "^1.5.0",
+    "popper.js": "^1.14.6",
+    "validator": "^10.11.0"
   },
   "devDependencies": {
     "css-loader": "^2.1.0",
