@@ -13,7 +13,7 @@ export default () => {
     urllist: [],
   };
   const body = document.querySelector('body');
-  const button = document.querySelector('button');
+  const button = document.querySelector('button.btn-outline-success');
   const inputForm = document.querySelector('input.form-control');
 
   watch(state, 'validationProcess', () => {
