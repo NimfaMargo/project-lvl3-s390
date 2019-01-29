@@ -1,9 +1,9 @@
-import WatchJS from 'melanke-watchjs';
+import { watch } from 'melanke-watchjs';
 import isURL from 'validator/lib/isURL';
+import $ from 'jquery';
 import getFeed from './model';
 
 export default () => {
-  const { watch } = WatchJS;
   const state = {
     validationProcess: {
       valid: true,
@@ -11,25 +11,23 @@ export default () => {
     },
     feedList: new Set(),
   };
+  const inputForm = $('input.form-control');
+  const button = $('button.btn-outline-success');
 
-  const button = document.querySelector('button.btn-outline-success');
-
-  const addFeedHandler = () => {
-    const link = document.getElementById('searchInput').value;
-    document.getElementById('searchInput').value = '';
+  button.on('click', () => {
+    const link = $('#searchInput').val();
+    $('#searchInput').val('');
     state.feedList.add(link);
     getFeed(link);
-  };
-  button.addEventListener('click', addFeedHandler);
+  });
 
-  const inputForm = document.querySelector('input.form-control');
 
   watch(state, 'validationProcess', () => {
     button.disabled = state.validationProcess.submitDisabled;
     if (state.validationProcess.valid) {
-      inputForm.classList.remove('is-invalid');
+      inputForm.removeClass('is-invalid');
     } else {
-      inputForm.classList.add('is-invalid');
+      inputForm.addClass('is-invalid');
     }
   });
 
@@ -45,5 +43,5 @@ export default () => {
       state.validationProcess.submitDisabled = false;
     }
   };
-  inputForm.addEventListener('keyup', validateHandle);
+  inputForm.on('keyup', validateHandle);
 };
