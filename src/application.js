@@ -1,7 +1,7 @@
 import WatchJS from 'melanke-watchjs';
 import isURL from 'validator/lib/isURL';
 import axios from 'axios';
-import { renderItemsList, renderChanelList } from './renders';
+import { renderArticlesList, renderChanelList } from './renders';
 
 export default () => {
   const parser = new DOMParser();
@@ -47,7 +47,7 @@ export default () => {
       .then(response => parser.parseFromString(response.data, 'application/xml'))
       .then((parsedXML) => {
         renderChanelList(parsedXML.querySelector('title'), parsedXML.querySelector('description'));
-        renderItemsList(parsedXML.querySelectorAll('item'));
+        renderArticlesList(parsedXML.querySelectorAll('item'));
       })
       .catch(console.log);
   };
