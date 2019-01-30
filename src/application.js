@@ -2,7 +2,7 @@ import { watch } from 'melanke-watchjs';
 import isURL from 'validator/lib/isURL';
 import $ from 'jquery';
 import axios from 'axios';
-import parseRss from './rss';
+import parseRss from './parser';
 import { renderArticlesList, renderChanelList, renderModal } from './renders';
 
 const run = () => {
