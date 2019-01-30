@@ -1,13 +1,13 @@
-const parseRss = (response) => {
+const parseRss = (data) => {
   const parser = new DOMParser();
-  const data = parser.parseFromString(response, 'application/xml');
+  const parsedData = parser.parseFromString(data, 'application/xml');
 
-  const feedtTitle = data.querySelector('title').textContent;
-  const feedDescription = data.querySelector('description').textContent;
+  const feedtTitle = parsedData.querySelector('title').textContent;
+  const feedDescription = parsedData.querySelector('description').textContent;
   const feed = { title: feedtTitle, description: feedDescription };
 
   let articles = [];
-  const items = data.querySelectorAll('item');
+  const items = parsedData.querySelectorAll('item');
   items.forEach((item) => {
     const link = item.querySelector('link').textContent;
     const title = item.querySelector('title').textContent;
