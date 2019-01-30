@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import 'bootstrap/js/dist/modal';
 
 const renderArticlesList = (parsedXML) => {
   const items = Object.values(parsedXML.querySelectorAll('item'));
@@ -6,21 +7,12 @@ const renderArticlesList = (parsedXML) => {
   items.forEach((item) => {
     const link = item.querySelector('link').textContent;
     const title = item.querySelector('title').textContent;
-    const description = item.querySelector('description').textContent;
     const listItem = $('<li></li>').html(
       `<a href="${link}">${title}</a>
-      <button class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-description="${description}" data-target="#myModal">
+      <button class="btn btn-primary btn-xs btn-article" type="button" data-toggle="modal" data-url="${link}">
         View Description
       </button>`,
     );
-    $('[data-toggle=modal]').on('click', (e) => {
-      const text = $(e.currentTarget).attr('data-description');
-      $('.modal-body p').html(text);
-      $('#myModal').show();
-    });
-    $('[data-dismiss=modal]').on('click', () => {
-      $('#myModal').hide();
-    });
     $('#articles').append(listItem);
   });
 };
@@ -31,4 +23,10 @@ const renderChanelList = (parsedXML) => {
   $('#channels').html('').append(listItem);
 };
 
-export { renderArticlesList, renderChanelList };
+const renderModal = (item) => {
+  const description = item.querySelector('description').textContent;
+  $('.modal-body p').html(description);
+  $('#myModal').modal();
+};
+
+export { renderArticlesList, renderChanelList, renderModal };
