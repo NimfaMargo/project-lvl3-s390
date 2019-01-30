@@ -1,19 +1,19 @@
 const parseRss = (response) => {
   const parser = new DOMParser();
   const data = parser.parseFromString(response, 'application/xml');
-  const feed = {
-    title: data.querySelector('title').textContent,
-    description: data.querySelector('description').textContent,
-  };
 
-  const articles = [];
+  const feedtTitle = data.querySelector('title').textContent;
+  const feedDescription = data.querySelector('description').textContent;
+  const feed = { feedtTitle, feedDescription };
+
+  let articles = [];
   const items = data.querySelectorAll('item');
   items.forEach((item) => {
-    articles.push({
-      link: item.querySelector('link').textContent,
-      title: item.querySelector('title').textContent,
-      description: item.querySelector('description').textContent,
-    });
+    const link = item.querySelector('link').textContent;
+    const title = item.querySelector('title').textContent;
+    const description = item.querySelector('description').textContent;
+    const article = { link, title, description };
+    articles = articles.concat(article);
   });
   return { feed, articles };
 };
