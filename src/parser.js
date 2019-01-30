@@ -4,7 +4,7 @@ const parseRss = (response) => {
 
   const feedtTitle = data.querySelector('title').textContent;
   const feedDescription = data.querySelector('description').textContent;
-  const feed = { feedtTitle, feedDescription };
+  const feed = { title: feedtTitle, description: feedDescription };
 
   let articles = [];
   const items = data.querySelectorAll('item');
