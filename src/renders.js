@@ -1,24 +1,30 @@
 import $ from 'jquery';
 import 'bootstrap/js/dist/modal';
+import 'bootstrap/js/dist/alert';
 
 const renderArticlesList = (articles) => {
-  $('#articles').html('');
+  const list = document.getElementById('articles');
+  list.innerHTML = '';
   articles.forEach((article) => {
     const { link, title } = article;
-    const listItem = $('<li></li>').html(
-      `<a href="${link}">${title}</a>
+    const listItem = document.createElement('li');
+    listItem.innerHTML = (`<a href="${link}">${title}</a>
       <button class="btn btn-primary btn-xs btn-article" type="button" data-toggle="modal" data-url="${link}">
         View Description
-      </button>`,
-    );
-    $('#articles').append(listItem);
+      </button>`);
+    list.append(listItem);
   });
 };
 
-const renderChanelList = (feed) => {
-  const { title, description } = feed;
-  const listItem = $('<li></li>').html(`<dt>${title}</dе><dd>${description}</dd>`);
-  $('#channels').html('').append(listItem);
+const renderChanelList = (feeds) => {
+  const list = document.getElementById('channels');
+  list.innerHTML = '';
+  feeds.forEach((feed) => {
+    const { title, description } = feed;
+    const listItem = document.createElement('li');
+    listItem.innerHTML = (`<dt>${title}</dе><dd>${description}</dd>`);
+    list.append(listItem);
+  });
 };
 
 const renderModal = (description) => {
@@ -26,4 +32,18 @@ const renderModal = (description) => {
   $('#myModal').modal();
 };
 
-export { renderArticlesList, renderChanelList, renderModal };
+const renderError = (message) => {
+  const body = document.querySelector('body');
+  const div = document.getElementById('MyAlert');
+  div.innerHTML = (`<div style="position: absolute; width: 100%" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span>${message}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>`);
+  body.prepend(div);
+};
+
+export {
+  renderArticlesList, renderChanelList, renderModal, renderError,
+};
