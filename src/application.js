@@ -1,9 +1,10 @@
 import { watch } from 'melanke-watchjs';
 import isURL from 'validator/lib/isURL';
-import $ from 'jquery';
 import axios from 'axios';
 import parseRss from './parser';
-import { renderArticlesList, renderChanelList, renderModal } from './renders';
+import {
+  renderArticlesList, renderChanelList, renderModal, renderError,
+} from './renders';
 
 const run = () => {
   const state = {
@@ -11,56 +12,86 @@ const run = () => {
       valid: true,
       submitDisabled: true,
     },
-    feed: '',
+    feed: [],
     articles: '',
     feedList: new Set(),
+    errorMessage: '',
   };
 
-  const inputForm = $('input.form-control');
-  const button = $('button.btn-outline-success');
+  const inputForm = document.querySelector('input.form-control');
+  const button = document.querySelector('button.btn-outline-success');
 
-  button.on('click', () => {
-    const link = $('#searchInput').val();
-    $('#searchInput').val('');
+  button.addEventListener('click', () => {
+    const link = document.getElementById('searchInput').value;
+    document.getElementById('searchInput').value = '';
     state.feedList.add(link);
 
     axios.get(`https://cors-anywhere.herokuapp.com/${link}`, { crossdomain: true })
       .then((response) => {
         const { feed, articles } = parseRss(response.data);
-        state.feed = feed;
+        state.feed = state.feed.concat(feed);
         state.articles = articles;
       })
       .catch((err) => {
-        console.log(err);
-        throw err;
+        state.errorMessage = '';
+        if (err.response) {
+          const errStatus = err.response.status;
+          switch (errStatus) {
+            case 404:
+              state.errorMessage = '404 Page Not Found';
+              break;
+            case 500:
+              state.errorMessage = '500 Internal Server Error';
+              break;
+            case 502:
+              state.errorMessage = '502 Bad Gateway Error';
+              break;
+            case 422:
+              state.errorMessage = '422 Unprocessable Entity Error';
+              break;
+            default:
+              state.errorMessage = 'Unknown err status';
+          }
+        } else if (state.feed.length === 0) {
+          state.errorMessage = 'Can\'t find any RSS feed';
+        } else {
+          state.errorMessage = err.message;
+        }
       });
   });
 
-  watch(state, 'validationProcess', () => {
-    button.prop('disabled', state.validationProcess.submitDisabled);
-    if (state.validationProcess.valid) {
-      inputForm.removeClass('is-invalid');
-    } else {
-      inputForm.addClass('is-invalid');
-    }
-  });
-
   const createDescriptionEvent = () => {
-    const articleButton = $('button.btn-article');
-    articleButton.on('click', (e) => {
-      const url = $(e.currentTarget).attr('data-url');
-      const article = state.articles.find(i => i.link === url);
-      renderModal(article.description);
+    const articleButton = document.querySelectorAll('button.btn-article');
+    articleButton.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const url = e.currentTarget.getAttribute('data-url');
+        const article = state.articles.find(i => i.link === url);
+        renderModal(article.description);
+      });
     });
   };
+  watch(state, 'errorMessage', () => {
+    renderError(state.errorMessage);
+  });
 
   watch(state, 'feed', () => {
-    renderChanelList(state.feed);
+    renderChanelList(state.feed); // [feed1, feed2]
   });
 
   watch(state, 'articles', () => {
     renderArticlesList(state.articles);
     createDescriptionEvent();
+  });
+
+  watch(state, 'validationProcess', () => {
+    button.disabled = state.validationProcess.submitDisabled;
+    if (state.validationProcess.valid) {
+      inputForm.style.border = null;
+      inputForm.classList.remove('is-invalid');
+    } else {
+      inputForm.style.border = 'thick solid red';
+      inputForm.classList.add('is-invalid');
+    }
   });
 
   const validateHandle = ({ target }) => {
@@ -75,7 +106,6 @@ const run = () => {
       state.validationProcess.submitDisabled = false;
     }
   };
-  inputForm.on('keyup', validateHandle);
+  inputForm.addEventListener('keyup', validateHandle);
 };
-
 export default run;
