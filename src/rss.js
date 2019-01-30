@@ -1,17 +1,21 @@
-import axios from 'axios';
-
-const getFeed = (url) => {
+const parseRss = (response) => {
   const parser = new DOMParser();
-  return axios.get(`https://cors-anywhere.herokuapp.com/${url}`, { crossdomain: true })
-    .then(response => parser.parseFromString(response.data, 'application/xml'))
-    .catch((err) => {
-      console.log(err);
-      throw err;
+  const data = parser.parseFromString(response, 'application/xml');
+  const feed = {
+    title: data.querySelector('title').textContent,
+    description: data.querySelector('description').textContent,
+  };
+
+  const articles = [];
+  const items = data.querySelectorAll('item');
+  items.forEach((item) => {
+    articles.push({
+      link: item.querySelector('link').textContent,
+      title: item.querySelector('title').textContent,
+      description: item.querySelector('description').textContent,
     });
-};
-const findByUrl = (state, url) => {
-  const items = Object.values(state.feed.querySelectorAll('item'));
-  return items.find(el => el.querySelector('link').textContent === url);
+  });
+  return { feed, articles };
 };
 
-export { getFeed, findByUrl };
+export default parseRss;

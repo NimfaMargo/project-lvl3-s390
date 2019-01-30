@@ -1,37 +1,38 @@
 import { watch } from 'melanke-watchjs';
 import isURL from 'validator/lib/isURL';
 import $ from 'jquery';
-import { getFeed, findByUrl } from './rss';
+import axios from 'axios';
+import parseRss from './rss';
 import { renderArticlesList, renderChanelList, renderModal } from './renders';
 
-export default () => {
+const run = () => {
   const state = {
     validationProcess: {
       valid: true,
       submitDisabled: true,
     },
+    feed: '',
+    articles: '',
     feedList: new Set(),
-    feed: {},
   };
 
   const inputForm = $('input.form-control');
   const button = $('button.btn-outline-success');
-  const createDescriptionEvent = () => {
-    const articleButton = $('button.btn-article');
-    articleButton.on('click', (e) => {
-      const url = $(e.currentTarget).attr('data-url');
-      const item = findByUrl(state, url);
-      renderModal(item);
-    });
-  };
 
   button.on('click', () => {
     const link = $('#searchInput').val();
     $('#searchInput').val('');
     state.feedList.add(link);
-    getFeed(link)
-      .then((parsedXML) => {
-        state.feed = parsedXML;
+
+    axios.get(`https://cors-anywhere.herokuapp.com/${link}`, { crossdomain: true })
+      .then((response) => {
+        const { feed, articles } = parseRss(response.data);
+        state.feed = feed;
+        state.articles = articles;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw err;
       });
   });
 
@@ -44,9 +45,21 @@ export default () => {
     }
   });
 
+  const createDescriptionEvent = () => {
+    const articleButton = $('button.btn-article');
+    articleButton.on('click', (e) => {
+      const url = $(e.currentTarget).attr('data-url');
+      const article = state.articles.find(i => i.link === url);
+      renderModal(article.description);
+    });
+  };
+
   watch(state, 'feed', () => {
     renderChanelList(state.feed);
-    renderArticlesList(state.feed);
+  });
+
+  watch(state, 'articles', () => {
+    renderArticlesList(state.articles);
     createDescriptionEvent();
   });
 
@@ -64,3 +77,5 @@ export default () => {
   };
   inputForm.on('keyup', validateHandle);
 };
+
+export default run;

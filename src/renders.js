@@ -1,12 +1,10 @@
 import $ from 'jquery';
 import 'bootstrap/js/dist/modal';
 
-const renderArticlesList = (parsedXML) => {
-  const items = Object.values(parsedXML.querySelectorAll('item'));
+const renderArticlesList = (articles) => {
   $('#articles').html('');
-  items.forEach((item) => {
-    const link = item.querySelector('link').textContent;
-    const title = item.querySelector('title').textContent;
+  articles.forEach((article) => {
+    const { link, title } = article;
     const listItem = $('<li></li>').html(
       `<a href="${link}">${title}</a>
       <button class="btn btn-primary btn-xs btn-article" type="button" data-toggle="modal" data-url="${link}">
@@ -16,15 +14,14 @@ const renderArticlesList = (parsedXML) => {
     $('#articles').append(listItem);
   });
 };
-const renderChanelList = (parsedXML) => {
-  const title = parsedXML.querySelector('title').textContent;
-  const description = parsedXML.querySelector('description').textContent;
+
+const renderChanelList = (feed) => {
+  const { title, description } = feed;
   const listItem = $('<li></li>').html(`<dt>${title}</dе><dd>${description}</dd>`);
   $('#channels').html('').append(listItem);
 };
 
-const renderModal = (item) => {
-  const description = item.querySelector('description').textContent;
+const renderModal = (description) => {
   $('.modal-body p').html(description);
   $('#myModal').modal();
 };
