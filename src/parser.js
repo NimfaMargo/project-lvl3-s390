@@ -13,7 +13,7 @@ const parseRss = (data) => {
     const title = item.querySelector('title').textContent;
     const description = item.querySelector('description').textContent;
     const article = { link, title, description };
-    articles = articles.concat(article);
+    articles = [...articles, article];
   });
   return { feed, articles };
 };
