@@ -1,5 +1,6 @@
 import { watch } from 'melanke-watchjs';
 import isURL from 'validator/lib/isURL';
+import _ from 'lodash';
 import axios from 'axios';
 import parseRss from './parser';
 import {
@@ -12,9 +13,10 @@ const run = () => {
       valid: true,
       submitDisabled: true,
     },
+    newArticles: [],
     feed: [],
-    articles: '',
-    feedList: new Set(),
+    articles: [],
+    feedList: [],
     errorMessage: '',
   };
 
@@ -24,12 +26,12 @@ const run = () => {
   button.addEventListener('click', () => {
     const link = document.getElementById('searchInput').value;
     document.getElementById('searchInput').value = '';
-    state.feedList.add(link);
+    state.feedList = [...state.feedList, link];
 
-    axios.get(`https://cors-anywhere.herokuapp.com/${link}`, { crossdomain: true })
+    axios.get(`https://cors-anywhere.herokuapp.com/${link}`)
       .then((response) => {
         const { feed, articles } = parseRss(response.data);
-        state.feed = state.feed.concat(feed);
+        state.feed = [...state.feed, feed];
         state.articles = articles;
       })
       .catch((err) => {
@@ -75,7 +77,7 @@ const run = () => {
   });
 
   watch(state, 'feed', () => {
-    renderChanelList(state.feed); // [feed1, feed2]
+    renderChanelList(state.feed);
   });
 
   watch(state, 'articles', () => {
@@ -98,7 +100,7 @@ const run = () => {
     if (target.value === '') {
       state.validationProcess.valid = true;
       state.validationProcess.submitDisabled = true;
-    } else if (!isURL(target.value) || state.feedList.has(target.value)) {
+    } else if (!isURL(target.value) || state.feedList.includes(target.value)) {
       state.validationProcess.valid = false;
       state.validationProcess.submitDisabled = true;
     } else {
@@ -107,5 +109,29 @@ const run = () => {
     }
   };
   inputForm.addEventListener('keyup', validateHandle);
+
+  const updateFeed = (feedUrls) => {
+    const promises = feedUrls.map(url => axios.get(`https://cors-anywhere.herokuapp.com/${url}`));
+    Promise.all(promises)
+      .then((data) => {
+        const farticles = _.flatten(data.map((el) => {
+          const { articles } = parseRss(el.data);
+          return articles;
+        }));
+        const currentArticles = state.articles;
+        const newArticles = _.differenceBy(farticles, currentArticles, 'link');
+
+        if (newArticles.length !== 0) {
+          state.newArticles = [...state.newArticles, ...newArticles];
+          state.articles = [...state.newArticles, ...state.articles];
+          state.newArticles = [];
+        }
+      })
+      .then(() => {
+        setTimeout(() => updateFeed(state.feedList), 5000);
+      })
+      .catch(err => console.log(err));
+  };
+  updateFeed(state.feedList);
 };
 export default run;
