@@ -2,6 +2,10 @@ const parseRss = (data) => {
   const parser = new DOMParser();
   const parsedData = parser.parseFromString(data, 'application/xml');
 
+  if (parsedData.getElementsByTagName('parsererror').length !== 0) {
+    throw new Error('error while parsing');
+  }
+
   const feedtTitle = parsedData.querySelector('title').textContent;
   const feedDescription = parsedData.querySelector('description').textContent;
   const feed = { title: feedtTitle, description: feedDescription };

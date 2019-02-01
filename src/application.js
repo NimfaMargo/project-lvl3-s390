@@ -12,6 +12,7 @@ const run = () => {
     validationProcess: {
       valid: true,
       submitDisabled: true,
+      inputDisabled: true,
     },
     newArticles: [],
     feed: [],
@@ -20,12 +21,41 @@ const run = () => {
     errorMessage: '',
   };
 
+  const errorHandler = (err) => {
+    if (err.response) {
+      const errStatus = err.response.status;
+      switch (errStatus) {
+        case 404:
+          state.errorMessage = '404 Page Not Found';
+          break;
+        case 500:
+          state.errorMessage = '500 Internal Server';
+          break;
+        case 502:
+          state.errorMessage = '502 Bad Gateway';
+          break;
+        case 422:
+          state.errorMessage = '422 Unprocessable Entity';
+          break;
+        default:
+          state.errorMessage = 'Unknown Error';
+      }
+    } else if (err.message === 'Network Error') {
+      state.errorMessage = 'No Internet Network Error';
+    } else if (state.feed.length === 0 || err.message === 'error while parsing') {
+      state.errorMessage = 'Can\'t find any RSS feed';
+    } else {
+      state.errorMessage = err.message;
+    }
+  };
+
   const inputForm = document.querySelector('input.form-control');
   const button = document.querySelector('button.btn-outline-success');
 
   button.addEventListener('click', () => {
+    state.validationProcess.submitDisabled = true;
+    state.validationProcess.inputDisabled = true;
     const link = document.getElementById('searchInput').value;
-    document.getElementById('searchInput').value = '';
     state.feedList = [...state.feedList, link];
 
     axios.get(`https://cors-anywhere.herokuapp.com/${link}`)
@@ -33,32 +63,15 @@ const run = () => {
         const { feed, articles } = parseRss(response.data);
         state.feed = [...state.feed, feed];
         state.articles = articles;
+        document.getElementById('searchInput').value = '';
+        state.validationProcess.inputDisabled = false;
       })
+      .then()
       .catch((err) => {
+        state.validationProcess.submitDisabled = false;
+        state.validationProcess.inputDisabled = false;
         state.errorMessage = '';
-        if (err.response) {
-          const errStatus = err.response.status;
-          switch (errStatus) {
-            case 404:
-              state.errorMessage = '404 Page Not Found';
-              break;
-            case 500:
-              state.errorMessage = '500 Internal Server Error';
-              break;
-            case 502:
-              state.errorMessage = '502 Bad Gateway Error';
-              break;
-            case 422:
-              state.errorMessage = '422 Unprocessable Entity Error';
-              break;
-            default:
-              state.errorMessage = 'Unknown err status';
-          }
-        } else if (state.feed.length === 0) {
-          state.errorMessage = 'Can\'t find any RSS feed';
-        } else {
-          state.errorMessage = err.message;
-        }
+        errorHandler(err);
       });
   });
 
@@ -87,6 +100,7 @@ const run = () => {
 
   watch(state, 'validationProcess', () => {
     button.disabled = state.validationProcess.submitDisabled;
+    inputForm.disabled = state.validationProcess.inputDisabled;
     if (state.validationProcess.valid) {
       inputForm.style.border = null;
       inputForm.classList.remove('is-invalid');
@@ -97,6 +111,7 @@ const run = () => {
   });
 
   const validateHandle = ({ target }) => {
+    state.validationProcess.inputDisabled = false;
     if (target.value === '') {
       state.validationProcess.valid = true;
       state.validationProcess.submitDisabled = true;
@@ -114,12 +129,12 @@ const run = () => {
     const promises = feedUrls.map(url => axios.get(`https://cors-anywhere.herokuapp.com/${url}`));
     Promise.all(promises)
       .then((data) => {
-        const farticles = _.flatten(data.map((el) => {
+        const receivedArticles = _.flatten(data.map((el) => {
           const { articles } = parseRss(el.data);
           return articles;
         }));
         const currentArticles = state.articles;
-        const newArticles = _.differenceBy(farticles, currentArticles, 'link');
+        const newArticles = _.differenceBy(receivedArticles, currentArticles, 'link');
 
         if (newArticles.length !== 0) {
           state.newArticles = [...state.newArticles, ...newArticles];
@@ -130,7 +145,7 @@ const run = () => {
       .then(() => {
         setTimeout(() => updateFeed(state.feedList), 5000);
       })
-      .catch(err => console.log(err));
+      .catch(err => errorHandler(err));
   };
   updateFeed(state.feedList);
 };

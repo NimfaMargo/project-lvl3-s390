@@ -35,7 +35,8 @@ const renderModal = (description) => {
 const renderError = (message) => {
   const body = document.querySelector('body');
   const div = document.getElementById('MyAlert');
-  div.innerHTML = (`<div style="position: absolute; width: 100%" class="alert alert-danger alert-dismissible fade show" role="alert">
+  div.innerHTML = (`<div class="alert alert-danger alert-dismissible position-absolute w-100 fade show" role="alert">
+    <strong>ERROR!</strong> 
     <span>${message}</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
