@@ -9,7 +9,7 @@ const renderArticlesList = (articles) => {
     const { link, title } = article;
     const listItem = document.createElement('li');
     listItem.innerHTML = (`<a href="${link}">${title}</a>
-      <button class="btn btn-primary btn-xs btn-article" type="button" data-toggle="modal" data-url="${link}">
+      <button class="btn btn-primary btn-article border" type="button" data-toggle="modal" data-url="${link}">
         View Description
       </button>`);
     list.append(listItem);
@@ -36,7 +36,7 @@ const renderError = (message) => {
   const body = document.querySelector('body');
   const div = document.getElementById('MyAlert');
   div.innerHTML = (`<div class="alert alert-danger alert-dismissible position-absolute w-100 fade show" role="alert">
-    <strong>ERROR!</strong> 
+    <strong>ERROR!</strong>
     <span>${message}</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
