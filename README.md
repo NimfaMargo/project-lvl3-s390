@@ -15,6 +15,6 @@ one of second, minute, day, month, or year.
 an integer to repeat the units at. For seconds and minutes this interval must evenly divide 60, for month it must evenly divide 12, and for day and year it can only be 1.
 
 ## Examples
-The default, updates once a minute: **/feed**
-Update every second instead of minute: **/feed?unit=minute**
-Update every 30 seconds: **/feed?unit=second&interval=30**
+- The default, updates once a minute: **/feed**
+- Update every second instead of minute: **/feed?unit=minute**
+- Update every 30 seconds: **/feed?unit=second&interval=30**
