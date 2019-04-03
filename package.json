@@ -18,34 +18,35 @@
   "author": "Margarita Nikiforova",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/NimfaMargo/project-lvl3-s390/issues"
+    "url": "git@github.com:NimfaMargo/RSS-reader-hexlet.git"
   },
   "homepage": "https://github.com/NimfaMargo/project-lvl3-s390#readme",
   "dependencies": {
-    "@babel/polyfill": "^7.2.5",
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.4.0",
+    "@babel/node": "^7.2.2",
+    "@babel/polyfill": "^7.4.3",
     "axios": "^0.18.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
-    "babel-preset-env": "^1.7.0",
+    "@babel/preset-env": "^7.4.2",
     "babel-preset-stage-0": "^6.24.1",
-    "bootstrap": "^4.2.1",
-    "eslint": "^5.12.1",
+    "bootstrap": "^4.3.1",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.16.0",
     "jquery": "^3.3.1",
     "lodash": "^4.17.11",
     "melanke-watchjs": "^1.5.0",
-    "popper.js": "^1.14.6",
+    "popper.js": "^1.14.7",
     "validator": "^10.11.0"
   },
   "devDependencies": {
-    "css-loader": "^2.1.0",
+    "css-loader": "^2.1.1",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
   }
 }
