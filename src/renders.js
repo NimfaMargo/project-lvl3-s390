@@ -9,7 +9,7 @@ const renderArticlesList = (articles) => {
     const { link, title } = article;
     const listItem = document.createElement('li');
     listItem.innerHTML = (`<a href="${link}">${title}</a>
-      <button class="btn btn-primary btn-article border" type="button" data-toggle="modal" data-url="${link}">
+      <button class="btn btn-primary btn-article border m-1" type="button" data-toggle="modal" data-url="${link}">
         View Description
       </button>`);
     list.append(listItem);
