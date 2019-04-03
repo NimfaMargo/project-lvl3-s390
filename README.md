@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.com/NimfaMargo/RSS-reader-hexlet.svg?branch=master)](https://travis-ci.com/NimfaMargo/RSS-reader-hexlet)
 [![Maintainability](https://api.codeclimate.com/v1/badges/02e3523acfbbd555f789/maintainability)](https://codeclimate.com/github/NimfaMargo/RSS-reader-hexlet/maintainability)
-## Simple RSS Reader with automatic update.
-[Check it!](http://rss-reader-margo.surge.sh/)
+## Simple RSS Reader with automatic update. [Check it!](http://rss-reader-margo.surge.sh/)
 
 Use this RSS feed generator for testing:
 [Lorem RSS](https://github.com/mbertolacci/lorem-rss)
