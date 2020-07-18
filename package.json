@@ -1,8 +1,7 @@
 {
   "name": "rss-reader-margo",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple RSS Reader with with automatic update",
-  "private": true,
   "scripts": {
     "babel-node": "babel-node",
     "build": "webpack",
